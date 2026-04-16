@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>How Old Did They Sound?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ─── SETUP ─────────────────────────────────────────── */
+  /* To save data to Google Sheets:
+     1. Open Google Sheets → Extensions → Apps Script
+     2. Paste the doPost(e) script (see README) and deploy as Web App
+     3. Replace SHEET_URL below with your Web App URL             */
+  :root {
+    --bg: #F5F2EA;
+    --card: #FFFFFF;
+    --navy: #0F2340;
+    --teal: #00A693;
+    --teal-light: #E0F5F2;
+    --orange: #F5602A;
+    --orange-light: #FEF0EB;
+    --muted: #7A8698;
+    --border: rgba(15,35,64,0.1);
+    --radius: 20px;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  /* ─── SCREENS ───────────────────────────────────────── */
+  .screen {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .screen.active { display: flex; flex-direction: column; gap: 20px; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── INTRO SCREEN ──────────────────────────────────── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    width: fit-content;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 8vw, 44px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--navy);
+  }
+  h1 em { font-style: italic; color: var(--teal); }
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .stats-row {
+    display: flex;
+    gap: 12px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ─── BUTTON ────────────────────────────────────────── */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 18px 24px;
+    border: none;
+    border-radius: 16px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 20px rgba(15,35,64,0.25);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(15,35,64,0.35); }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .btn-teal {
+    background: var(--teal);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0,166,147,0.3);
+  }
+
+  /* ─── PROGRESS ──────────────────────────────────────── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  /* ─── CONVERSATION CARD ─────────────────────────────── */
+  .conv-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .conv-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .bubble-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .bubble-adult {
+    background: var(--bg);
+    color: var(--navy);
+    border-radius: 18px 18px 18px 4px;
+    align-self: flex-start;
+  }
+  .bubble-child {
+    background: var(--teal-light);
+    color: #004D44;
+    border-radius: 18px 18px 4px 18px;
+    align-self: flex-end;
+  }
+  .bubble-speaker {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 3px;
+    color: var(--muted);
+  }
+  .bubble-adult .bubble-speaker { text-align: left; }
+  .bubble-child .bubble-speaker { text-align: right; }
+
+  /* ─── AGE PICKER ────────────────────────────────────── */
+  .age-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    border: 1px solid var(--border);
+  }
+  .age-question {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+  .age-display {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .age-number {
+    font-family: var(--font-display);
+    font-size: 72px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .age-unit {
+    font-size: 18px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 100px;
+    outline: none;
+    cursor: pointer;
+    margin: 8px 0 12px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--navy);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(15,35,64,0.3);
+    transition: transform 0.15s;
+  }
+  input[type=range]:active::-webkit-slider-thumb { transform: scale(1.2); }
+  .age-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+  }
+  .age-tick {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* ─── REVEAL SCREEN ─────────────────────────────────── */
+  .reveal-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .reveal-card {
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    animation: revealPop 0.4s ease both;
+  }
+  .reveal-card:nth-child(2) { animation-delay: 0.1s; }
+  .reveal-card:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes revealPop {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .reveal-card.you-card { background: var(--orange-light); border-color: rgba(245,96,42,0.2); }
+  .reveal-card.model-card { background: var(--bg); }
+  .reveal-card.real-card { background: var(--teal-light); border-color: rgba(0,166,147,0.2); }
+  .reveal-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .you-card .reveal-label { color: var(--orange); }
+  .model-card .reveal-label { color: var(--muted); }
+  .real-card .reveal-label { color: var(--teal); }
+  .reveal-age {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .reveal-sublabel {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .insight-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .insight-box strong { color: var(--teal); }
+
+  /* ─── DONE SCREEN ───────────────────────────────────── */
+  .done-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  .done-icon svg { width: 32px; height: 32px; }
+  .done-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 300;
+    text-align: center;
+    line-height: 1.3;
+  }
+  .done-title em { font-style: italic; color: var(--teal); }
+  .done-body {
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.7;
+  }
+  .osu-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .osu-dot { width: 8px; height: 8px; border-radius: 50%; background: #BB0000; }
+</style>
+</head>
+<body>
+
+<!-- ─── SCREEN: INTRO ─────────────────────────────────── -->
+<div class="screen active" id="screen-intro">
+  <div class="badge"><span class="badge-dot"></span> Live Research Study</div>
+  <div>
+    <h1>Can you guess how <em>old</em> they sound?</h1>
+  </div>
+  <p class="subtitle">
+    Read a short conversation between a child and an adult, then guess the child's age.
+    You're helping us build AI that understands how children develop language.
+  </p>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number">5</div>
+      <div class="stat-label">Short conversations</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">~2</div>
+      <div class="stat-label">Minutes to complete</div>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="startDemo()">
+    Start guessing
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="osu-badge">
+    <div class="osu-dot"></div>
+    The Ohio State University — Speech & Language Lab
+  </div>
+</div>
+
+<!-- ─── SCREEN: QUESTION ──────────────────────────────── -->
+<div class="screen" id="screen-question">
+  <div class="progress-wrap">
+    <span class="progress-label" id="progress-text">1 of 5</span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+  </div>
+
+  <div class="conv-card">
+    <div class="conv-label">Read this conversation</div>
+    <div class="bubble-row" id="bubbles"></div>
+  </div>
+
+  <div class="age-section">
+    <div class="age-question">How old is the child?</div>
+    <div class="age-display">
+      <span class="age-number" id="age-display">6</span>
+      <span class="age-unit"> yrs</span>
+    </div>
+    <input type="range" id="age-slider" min="2" max="10" step="1" value="6"
+      oninput="updateAge(this.value)" style="background: linear-gradient(to right, var(--navy) 50%, var(--border) 50%)">
+    <div class="age-ticks">
+      <span class="age-tick">2</span><span class="age-tick">3</span><span class="age-tick">4</span>
+      <span class="age-tick">5</span><span class="age-tick">6</span><span class="age-tick">7</span>
+      <span class="age-tick">8</span><span class="age-tick">9</span><span class="age-tick">10</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="submitGuess()">
+    Submit my guess
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- ─── SCREEN: REVEAL ────────────────────────────────── -->
+<div class="screen" id="screen-reveal">
+  <div style="font-family:var(--font-display);font-size:22px;font-weight:300;line-height:1.4">
+    Here's how everyone did
+  </div>
+
+  <div class="reveal-cards">
+    <div class="reveal-card you-card">
+      <div class="reveal-label">You</div>
+      <div class="reveal-age" id="reveal-you">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+    <div class="reveal-card model-card">
+      <div class="reveal-label">AI model</div>
+      <div class="reveal-age" id="reveal-model">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+    <div class="reveal-card real-card">
+      <div class="reveal-label">Real age</div>
+      <div class="reveal-age" id="reveal-real">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+  </div>
+
+  <div class="insight-box" id="insight-box"></div>
+
+  <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+    Next conversation
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- ─── SCREEN: DONE ──────────────────────────────────── -->
+<div class="screen" id="screen-done">
+  <div class="done-icon">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 16.5l7 7 13-14" stroke="#00A693" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="done-title">Thank you for <em>contributing</em> to our research!</div>
+  <p class="done-body">
+    Your guesses help us understand how people perceive children's language — and how that compares to what AI models detect.
+    Every response brings us closer to building better tools for understanding child development.
+  </p>
+  <div class="stats-row">
+    <div class="stat-card" style="text-align:center">
+      <div class="stat-number" id="done-avg-error">—</div>
+      <div class="stat-label">Your avg. error (years)</div>
+    </div>
+    <div class="stat-card" style="text-align:center">
+      <div class="stat-number" id="done-model-error">—</div>
+      <div class="stat-label">AI avg. error (years)</div>
+    </div>
+  </div>
+  <button class="btn btn-teal" onclick="resetDemo()">Try again</button>
+  <div class="osu-badge">
+    <div class="osu-dot"></div>
+    The Ohio State University — Speech & Language Lab
+  </div>
+</div>
+
+<script>
+/* ─── CONFIG ──────────────────────────────────────────────
+   Replace with your Google Apps Script Web App URL.
+   See: https://developers.google.com/apps-script/guides/web
+   ─────────────────────────────────────────────────────── */
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbycx60JpH76EwA8F89fXjqqky7V2pq8cdVy_qP059SHMHVl22f2Tbt099-G9WgNoqO8JA/exec";
+
+/* ─── CONVERSATIONS ───────────────────────────────────── */
+const convos = [
+  {
+    id: "conv_A",
+    real_age: 3,
+    model_age: 3,
+    turns: [
+      { speaker: "adult", text: "What's your favorite animal?" },
+      { speaker: "child", text: "Doggy! Big doggy go woof woof!" },
+      { speaker: "adult", text: "Do you have a dog at home?" },
+      { speaker: "child", text: "No. Want doggy. Mommy say no." }
+    ],
+    insight: "Children around 2–3 often use simple 2–4 word sentences and repeat sounds (like \"woof woof\"). The missing grammar words like \"a\" and \"says\" are typical for this age."
+  },
+  {
+    id: "conv_B",
+    real_age: 5,
+    model_age: 5,
+    turns: [
+      { speaker: "adult", text: "What did you learn at school today?" },
+      { speaker: "child", text: "We drawed butterflies and my teacher said mine was really good!" },
+      { speaker: "adult", text: "That sounds fun! What colors did you use?" },
+      { speaker: "child", text: "Yellow and orange and a little bit blue." }
+    ],
+    insight: "\"Drawed\" instead of \"drew\" is a classic over-regularization error common around age 4–5. Kids this age can form full sentences but still have irregular verb forms."
+  },
+  {
+    id: "conv_C",
+    real_age: 7,
+    model_age: 7,
+    turns: [
+      { speaker: "adult", text: "What's your favorite subject in school?" },
+      { speaker: "child", text: "Science because we do experiments. Last week we made a volcano!" },
+      { speaker: "adult", text: "Wow, what happened?" },
+      { speaker: "child", text: "It exploded with baking soda and vinegar. My partner spilled some on the table." }
+    ],
+    insight: "By age 6–8, children can give causal explanations (\"because\"), sequence events, and describe social situations with other people. Grammar is mostly correct."
+  },
+  {
+    id: "conv_D",
+    real_age: 9,
+    model_age: 9,
+    turns: [
+      { speaker: "adult", text: "What do you want to be when you grow up?" },
+      { speaker: "child", text: "Maybe a game designer. I've been thinking about making my own game but I need to learn coding first." },
+      { speaker: "adult", text: "Have you started learning?" },
+      { speaker: "child", text: "A little. I tried Scratch but it feels too basic. I want to learn Python." }
+    ],
+    insight: "The ability to express hypothetical futures, acknowledge gaps in knowledge, and compare tools (\"too basic\") reflects sophisticated thinking typical of ages 9–10."
+  },
+  {
+    id: "conv_E",
+    real_age: 6,
+    model_age: 6,
+    turns: [
+      { speaker: "adult", text: "Do you like the science museum?" },
+      { speaker: "child", text: "Yes! I like the dinosaur part the most. Did you know T-Rex had tiny arms but they were still really strong?" },
+      { speaker: "adult", text: "I didn't know that! How do you know so much?" },
+      { speaker: "child", text: "I have like a hundred dinosaur books. My grandma buys them for me." }
+    ],
+    insight: "Sharing factual knowledge (\"did you know...\"), using hyperbole (\"a hundred books\"), and linking people to actions are all typical around age 6. The enthusiasm is characteristic too!"
+  }
+];
+
+/* ─── STATE ───────────────────────────────────────────── */
+let currentIdx = 0;
+let userGuess = 6;
+let results = [];
+const sessionId = Math.random().toString(36).slice(2, 9);
+
+/* ─── HELPERS ─────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const el = document.getElementById(id);
+  el.classList.add("active");
+  el.style.animation = "none";
+  requestAnimationFrame(() => { el.style.animation = ""; });
+}
+
+function updateAge(val) {
+  userGuess = parseInt(val);
+  document.getElementById("age-display").textContent = val;
+  const pct = ((val - 2) / 8) * 100;
+  this.event && (this.event.target.style.background =
+    `linear-gradient(to right, var(--navy) ${pct}%, var(--border) ${pct}%)`);
+  const slider = document.getElementById("age-slider");
+  slider.style.background =
+    `linear-gradient(to right, var(--navy) ${pct}%, rgba(15,35,64,0.12) ${pct}%)`;
+}
+
+function renderBubbles(convo) {
+  const container = document.getElementById("bubbles");
+  container.innerHTML = "";
+  convo.turns.forEach(turn => {
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+    wrapper.style.alignItems = turn.speaker === "child" ? "flex-end" : "flex-start";
+    const speaker = document.createElement("div");
+    speaker.className = "bubble-speaker";
+    speaker.textContent = turn.speaker === "adult" ? "Museum guide" : "Child";
+    const bubble = document.createElement("div");
+    bubble.className = "bubble bubble-" + turn.speaker;
+    bubble.textContent = turn.text;
+    wrapper.appendChild(speaker);
+    wrapper.appendChild(bubble);
+    container.appendChild(wrapper);
+  });
+}
+
+/* ─── NAVIGATION ──────────────────────────────────────── */
+function startDemo() {
+  currentIdx = 0;
+  results = [];
+  loadQuestion(0);
+}
+
+function loadQuestion(idx) {
+  const convo = convos[idx];
+  document.getElementById("progress-text").textContent = `${idx + 1} of ${convos.length}`;
+  document.getElementById("progress-fill").style.width = `${((idx + 1) / convos.length) * 100}%`;
+  const slider = document.getElementById("age-slider");
+  slider.value = 6;
+  userGuess = 6;
+  document.getElementById("age-display").textContent = 6;
+  slider.style.background = "linear-gradient(to right, var(--navy) 50%, rgba(15,35,64,0.12) 50%)";
+  renderBubbles(convo);
+  showScreen("screen-question");
+}
+
+function submitGuess() {
+  const convo = convos[currentIdx];
+  results.push({ id: convo.id, guess: userGuess, model: convo.model_age, real: convo.real_age });
+  saveToSheet(convo.id, userGuess, convo.model_age, convo.real_age);
+
+  document.getElementById("reveal-you").textContent = userGuess;
+  document.getElementById("reveal-model").textContent = convo.model_age;
+  document.getElementById("reveal-real").textContent = convo.real_age;
+
+  const diff = Math.abs(userGuess - convo.real_age);
+  const modelDiff = Math.abs(convo.model_age - convo.real_age);
+  let insightHTML = `<strong>Did you know?</strong> ${convo.insight}`;
+  if (diff === 0) insightHTML = `<strong>Perfect!</strong> You got it exactly right. ${convo.insight}`;
+  else if (diff <= 1) insightHTML = `<strong>Very close!</strong> You were just ${diff} year off. ${convo.insight}`;
+  document.getElementById("insight-box").innerHTML = insightHTML;
+
+  const isLast = currentIdx >= convos.length - 1;
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.textContent = isLast ? "See your results" : "Next conversation";
+  nextBtn.innerHTML = isLast
+    ? `See your results <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `Next conversation <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  showScreen("screen-reveal");
+}
+
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= convos.length) {
+    showDone();
+  } else {
+    loadQuestion(currentIdx);
+  }
+}
+
+function showDone() {
+  const userErrors = results.map(r => Math.abs(r.guess - r.real));
+  const modelErrors = results.map(r => Math.abs(r.model - r.real));
+  const avgUser = (userErrors.reduce((a,b) => a+b, 0) / userErrors.length).toFixed(1);
+  const avgModel = (modelErrors.reduce((a,b) => a+b, 0) / modelErrors.length).toFixed(1);
+  document.getElementById("done-avg-error").textContent = avgUser;
+  document.getElementById("done-model-error").textContent = avgModel;
+  showScreen("screen-done");
+}
+
+function resetDemo() {
+  currentIdx = 0;
+  results = [];
+  showScreen("screen-intro");
+}
+
+/* ─── GOOGLE SHEETS SAVE ─────────────────────────────── */
+function saveToSheet(convId, userAge, modelAge, realAge) {
+  if (SHEET_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
+  const payload = {
+    session: sessionId,
+    timestamp: new Date().toISOString(),
+    conversation_id: convId,
+    user_guess: userAge,
+    model_guess: modelAge,
+    real_age: realAge,
+    user_error: Math.abs(userAge - realAge),
+    model_error: Math.abs(modelAge - realAge)
+  };
+  fetch(SHEET_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
