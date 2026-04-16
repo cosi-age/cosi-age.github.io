@@ -403,6 +403,17 @@
     Start guessing
     <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </button>
+
+  <div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;display:flex;align-items:center;gap:20px;">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://cosi-age.github.io&bgcolor=FFFFFF&color=0F2340&margin=4"
+      alt="QR code" width="90" height="90" style="border-radius:8px;flex-shrink:0;">
+    <div>
+      <div style="font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Join on your phone</div>
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--navy);">cosi-age.github.io</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Scan to participate</div>
+    </div>
+  </div>
+
   <div class="osu-badge">
     <div class="osu-dot"></div>
     The Ohio State University — Speech & Language Lab
@@ -508,7 +519,7 @@
    Replace with your Google Apps Script Web App URL.
    See: https://developers.google.com/apps-script/guides/web
    ─────────────────────────────────────────────────────── */
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbycx60JpH76EwA8F89fXjqqky7V2pq8cdVy_qP059SHMHVl22f2Tbt099-G9WgNoqO8JA/exec";
+const SHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
 /* ─── CONVERSATIONS ───────────────────────────────────── */
 const convos = [
