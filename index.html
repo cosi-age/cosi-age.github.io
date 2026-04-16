@@ -717,10 +717,9 @@ function saveToSheet(convId, userAge, modelAge, realAge) {
     model_error: Math.abs(modelAge - realAge)
   };
   fetch(SHEET_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(payload)
   }).catch(() => {});
 }
 </script>
