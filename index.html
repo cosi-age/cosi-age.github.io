@@ -13,15 +13,15 @@
      2. Paste the doPost(e) script (see README) and deploy as Web App
      3. Replace SHEET_URL below with your Web App URL             */
   :root {
-    --bg: #F5F2EA;
+    --bg: #EAE7DE;
     --card: #FFFFFF;
-    --navy: #0F2340;
-    --teal: #00A693;
-    --teal-light: #E0F5F2;
-    --orange: #F5602A;
-    --orange-light: #FEF0EB;
-    --muted: #7A8698;
-    --border: rgba(15,35,64,0.1);
+    --navy: #0A1828;
+    --teal: #007A6B;
+    --teal-light: #C8EDE8;
+    --orange: #D44A18;
+    --orange-light: #FAE4DC;
+    --muted: #3D4E5E;
+    --border: rgba(10,24,40,0.18);
     --radius: 20px;
     --font-display: 'Fraunces', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
@@ -90,6 +90,7 @@
     font-size: 16px;
     color: var(--muted);
     line-height: 1.6;
+    font-weight: 500;
   }
   .stats-row {
     display: flex;
@@ -204,12 +205,14 @@
     color: var(--navy);
     border-radius: 18px 18px 18px 4px;
     align-self: flex-start;
+    font-weight: 500;
   }
   .bubble-child {
     background: var(--teal-light);
-    color: #004D44;
+    color: #002B24;
     border-radius: 18px 18px 4px 18px;
     align-self: flex-end;
+    font-weight: 500;
   }
   .bubble-speaker {
     font-size: 10px;
@@ -334,8 +337,9 @@
     padding: 16px 18px;
     border: 1px solid var(--border);
     font-size: 14px;
-    color: var(--navy);
+    color: #1A2A3A;
     line-height: 1.6;
+    font-weight: 500;
   }
   .insight-box strong { color: var(--teal); }
 
@@ -358,9 +362,10 @@
   .done-title em { font-style: italic; color: var(--teal); }
   .done-body {
     font-size: 14px;
-    color: var(--muted);
+    color: #2A3A4A;
     text-align: center;
     line-height: 1.7;
+    font-weight: 500;
   }
   .osu-badge {
     display: flex;
@@ -416,7 +421,7 @@
 
   <div class="osu-badge">
     <div class="osu-dot"></div>
-    The Ohio State University
+    The Ohio State University — Speech & Language Lab
   </div>
 </div>
 
@@ -510,7 +515,7 @@
   <button class="btn btn-teal" onclick="resetDemo()">Try again</button>
   <div class="osu-badge">
     <div class="osu-dot"></div>
-    The Ohio State University
+    The Ohio State University — Speech & Language Lab
   </div>
 </div>
 
@@ -519,8 +524,7 @@
    Replace with your Google Apps Script Web App URL.
    See: https://developers.google.com/apps-script/guides/web
    ─────────────────────────────────────────────────────── */
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbzhkN8e02Ejb7XtOzsa3FwW7kbJEJ0o5q-1IsERrvOhmgAbUOpUil7WfDAUYalw6R--bw/exec";
-
+const SHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
 
 /* ─── CONVERSATIONS ───────────────────────────────────── */
 const convos = [
@@ -534,7 +538,7 @@ const convos = [
       { speaker: "adult", text: "Do you have a dog at home?" },
       { speaker: "child", text: "No. Want doggy. Mommy say no." }
     ],
-    insight: "Children around 2–3 often use simple 2–4 word sentences and repeat sounds (like \"woof woof\"). The missing grammar words like \"a\" and \"says\" are typical for this age."
+    insight: "At age 2–3, kids use short phrases and drop grammar words like \"a\" or \"says.\""
   },
   {
     id: "conv_B",
@@ -546,7 +550,7 @@ const convos = [
       { speaker: "adult", text: "That sounds fun! What colors did you use?" },
       { speaker: "child", text: "Yellow and orange and a little bit blue." }
     ],
-    insight: "\"Drawed\" instead of \"drew\" is a classic over-regularization error common around age 4–5. Kids this age can form full sentences but still have irregular verb forms."
+    insight: "\"Drawed\" instead of \"drew\" is classic age 4–5 — kids apply regular rules to irregular verbs."
   },
   {
     id: "conv_C",
@@ -558,7 +562,7 @@ const convos = [
       { speaker: "adult", text: "Wow, what happened?" },
       { speaker: "child", text: "It exploded with baking soda and vinegar. My partner spilled some on the table." }
     ],
-    insight: "By age 6–8, children can give causal explanations (\"because\"), sequence events, and describe social situations with other people. Grammar is mostly correct."
+    insight: "Age 6–8 kids use \"because\" to explain things and can sequence events with mostly correct grammar."
   },
   {
     id: "conv_D",
@@ -570,7 +574,7 @@ const convos = [
       { speaker: "adult", text: "Have you started learning?" },
       { speaker: "child", text: "A little. I tried Scratch but it feels too basic. I want to learn Python." }
     ],
-    insight: "The ability to express hypothetical futures, acknowledge gaps in knowledge, and compare tools (\"too basic\") reflects sophisticated thinking typical of ages 9–10."
+    insight: "Hypothetical thinking (\"I need to learn\") and comparing options are typical signs of age 9–10."
   },
   {
     id: "conv_E",
@@ -582,7 +586,7 @@ const convos = [
       { speaker: "adult", text: "I didn't know that! How do you know so much?" },
       { speaker: "child", text: "I have like a hundred dinosaur books. My grandma buys them for me." }
     ],
-    insight: "Sharing factual knowledge (\"did you know...\"), using hyperbole (\"a hundred books\"), and linking people to actions are all typical around age 6. The enthusiasm is characteristic too!"
+    insight: "Sharing facts, using hyperbole (\"a hundred books\"), and high enthusiasm are all classic age 6!"
   }
 ];
 
@@ -717,9 +721,10 @@ function saveToSheet(convId, userAge, modelAge, realAge) {
     model_error: Math.abs(modelAge - realAge)
   };
   fetch(SHEET_URL, {
-  method: "POST",
-  mode: "no-cors",
-  body: JSON.stringify(payload)
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
   }).catch(() => {});
 }
 </script>
