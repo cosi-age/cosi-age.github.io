@@ -3,15 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>How Old Did They Sound?</title>
+<title>Can You Guess How Old They Are?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  /* ─── SETUP ─────────────────────────────────────────── */
-  /* To save data to Google Sheets:
-     1. Open Google Sheets → Extensions → Apps Script
-     2. Paste the doPost(e) script (see README) and deploy as Web App
-     3. Replace SHEET_URL below with your Web App URL             */
   :root {
     --bg: #EAE7DE;
     --card: #FFFFFF;
@@ -87,9 +82,9 @@
   }
   h1 em { font-style: italic; color: var(--teal); }
   .subtitle {
-    font-size: 16px;
+    font-size: 15px;
     color: var(--muted);
-    line-height: 1.6;
+    line-height: 1.65;
     font-weight: 500;
   }
   .stats-row {
@@ -114,6 +109,112 @@
     color: var(--muted);
     margin-top: 2px;
   }
+
+  /* ─── DEVELOPMENT EXPLAINER CARD ────────────────────── */
+  .explainer-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+  .explainer-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .dev-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .dev-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dev-age {
+    flex-shrink: 0;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .dev-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .dev-desc strong { color: var(--navy); }
+
+  /* ─── LEARN SCREEN ──────────────────────────────────── */
+  .learn-hero {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 6vw, 34px);
+    font-weight: 300;
+    line-height: 1.25;
+    color: var(--navy);
+  }
+  .learn-hero em { font-style: italic; color: var(--teal); }
+  .learn-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .learn-section-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .dimension-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .dimension-card {
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .dimension-card.expansion { background: var(--orange-light); border-color: rgba(212,74,24,0.15); }
+  .dimension-card.independence { background: var(--teal-light); border-color: rgba(0,122,107,0.2); }
+  .dim-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .expansion .dim-label { color: var(--orange); }
+  .independence .dim-label { color: var(--teal); }
+  .dim-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .why-box {
+    background: var(--bg);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .why-box strong { color: var(--navy); }
 
   /* ─── BUTTON ────────────────────────────────────────── */
   .btn {
@@ -171,7 +272,43 @@
     transition: width 0.4s ease;
   }
 
-  /* ─── CONVERSATION CARD ─────────────────────────────── */
+  /* ─── CONVERSATION ILLUSTRATION ─────────────────────── */
+  .conv-illustration {
+    border-radius: 14px;
+    overflow: hidden;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  .conv-illustration.scene-sheep  { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+  .conv-illustration.scene-school { background: linear-gradient(135deg, #fff8e1, #ffe082); }
+  .conv-illustration.scene-boat   { background: linear-gradient(135deg, #e3f2fd, #90caf9); }
+
+  /* ─── ENHANCED DEV STEPS ─────────────────────────────── */
+  .dev-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dev-emoji {
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .dev-step-text { display: flex; flex-direction: column; gap: 3px; padding-top: 2px; }
+
+  /* ─── AGE TICK EMOJIS ────────────────────────────────── */
+  .age-tick-emoji { font-size: 14px; display: block; text-align: center; }
+  .age-tick-num   { font-size: 10px; color: var(--muted); display: block; text-align: center; }
+  .age-tick-highlight .age-tick-num { color: var(--navy); font-weight: 600; }
   .conv-card {
     background: var(--card);
     border-radius: var(--radius);
@@ -342,6 +479,18 @@
     font-weight: 500;
   }
   .insight-box strong { color: var(--teal); }
+  .insight-box .insight-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+  .tag-expansion { background: var(--orange-light); color: var(--orange); }
+  .tag-independence { background: var(--teal-light); color: var(--teal); }
 
   /* ─── DONE SCREEN ───────────────────────────────────── */
   .done-icon {
@@ -367,6 +516,24 @@
     line-height: 1.7;
     font-weight: 500;
   }
+  .done-research-box {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .done-research-box strong { color: var(--navy); }
+  .done-research-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
   .osu-badge {
     display: flex;
     align-items: center;
@@ -380,6 +547,77 @@
     color: var(--muted);
   }
   .osu-dot { width: 8px; height: 8px; border-radius: 50%; background: #BB0000; }
+
+  /* ─── AGE EMOJI ─────────────────────────────────────── */
+  .age-emoji {
+    font-size: 52px;
+    text-align: center;
+    line-height: 1;
+    margin-bottom: 4px;
+    transition: transform 0.2s ease;
+    display: block;
+  }
+  .age-emoji.pop {
+    animation: emojipop 0.25s ease;
+  }
+  @keyframes emojipop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  .bubble-avatar {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+
+  .operator-section {
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .operator-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 0;
+    letter-spacing: 0.04em;
+  }
+  .operator-toggle svg { transition: transform 0.25s; }
+  .operator-toggle.open svg { transform: rotate(180deg); }
+  .operator-content {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+  }
+  .operator-content.visible { display: flex; }
+  .talking-point {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .tp-num {
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--navy);
+  }
 </style>
 </head>
 <body>
@@ -388,15 +626,44 @@
 <div class="screen active" id="screen-intro">
   <div class="badge"><span class="badge-dot"></span> Live Research Study</div>
   <div>
-    <h1>Can you guess how <em>old</em> they sound?</h1>
+    <h1>Can you guess how <em>old</em> they are?</h1>
   </div>
   <p class="subtitle">
-    Read a short conversation between a child and an adult, then guess the child's age.
-    You're helping us build AI that understands how children develop language.
+    Read a short conversation, then guess how old the child is.
+    See if you can beat the AI!
   </p>
+
+  <!-- developmental teaser card -->
+  <div class="explainer-card">
+    <div class="explainer-title">How kids talk at different ages</div>
+    <div class="dev-steps">
+      <div class="dev-step">
+        <div class="dev-emoji">🐑</div>
+        <div class="dev-step-text">
+          <span class="dev-age">Age 2–3</span>
+          <span class="dev-desc">"This sheep wants go in here."</span>
+        </div>
+      </div>
+      <div class="dev-step">
+        <div class="dev-emoji">✏️</div>
+        <div class="dev-step-text">
+          <span class="dev-age">Age 5–6</span>
+          <span class="dev-desc">"I have recess. I have lunch. I have math."</span>
+        </div>
+      </div>
+      <div class="dev-step">
+        <div class="dev-emoji">🦁</div>
+        <div class="dev-step-text">
+          <span class="dev-age">Age 9–10</span>
+          <span class="dev-desc">"They couldn't get back on land because plants were surrounding it."</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-number">5</div>
+      <div class="stat-number">3</div>
       <div class="stat-label">Short conversations</div>
     </div>
     <div class="stat-card">
@@ -404,9 +671,13 @@
       <div class="stat-label">Minutes to complete</div>
     </div>
   </div>
-  <button class="btn btn-primary" onclick="startDemo()">
-    Start guessing
+
+  <button class="btn btn-primary" onclick="goToLearn()">
+    Learn more first
     <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="btn btn-secondary" onclick="startDemo()">
+    Skip — just start guessing
   </button>
 
   <div style="background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:20px;display:flex;align-items:center;gap:20px;">
@@ -423,6 +694,43 @@
     <div class="osu-dot"></div>
     The Ohio State University
   </div>
+</div>
+
+<!-- ─── SCREEN: LEARN ─────────────────────────────────── -->
+<div class="screen" id="screen-learn">
+  <div class="learn-hero">Why does <em>age</em> matter for AI?</div>
+
+  <div class="learn-section">
+    <div class="learn-section-title">What we look for</div>
+    <div class="dimension-row">
+      <div class="dimension-card expansion">
+        <div class="dim-label">💬 Expansion</div>
+        <div class="dim-desc">Does the child add reasons and details?</div>
+      </div>
+      <div class="dimension-card independence">
+        <div class="dim-label">⭐ Independence</div>
+        <div class="dim-desc">Does the child bring up new ideas on their own?</div>
+      </div>
+    </div>
+    <div class="why-box">
+      These two things help our AI guess a child's age better than just counting words.
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <div class="learn-section-title">Why it matters</div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.65;font-weight:500;">
+      AI is mostly trained on <strong>adult language</strong>.
+      We want AI to understand how kids talk too —
+      so it can respond in the right way for a 5-year-old vs. a 10-year-old.
+    </p>
+  </div>
+
+  <button class="btn btn-primary" onclick="startDemo()">
+    Start guessing
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="btn btn-secondary" onclick="showScreen('screen-intro')">← Back</button>
 </div>
 
 <!-- ─── SCREEN: QUESTION ──────────────────────────────── -->
@@ -446,9 +754,15 @@
     <input type="range" id="age-slider" min="2" max="10" step="1" value="6"
       oninput="updateAge(this.value)" style="background: linear-gradient(to right, var(--navy) 50%, var(--border) 50%)">
     <div class="age-ticks">
-      <span class="age-tick">2</span><span class="age-tick">3</span><span class="age-tick">4</span>
-      <span class="age-tick">5</span><span class="age-tick">6</span><span class="age-tick">7</span>
-      <span class="age-tick">8</span><span class="age-tick">9</span><span class="age-tick">10</span>
+      <span class="age-tick age-tick-highlight"><span class="age-tick-emoji">🐣</span><span class="age-tick-num">2</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">3</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">4</span></span>
+      <span class="age-tick age-tick-highlight"><span class="age-tick-emoji">✏️</span><span class="age-tick-num">5</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">6</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">7</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">8</span></span>
+      <span class="age-tick age-tick-highlight"><span class="age-tick-emoji">🧠</span><span class="age-tick-num">9</span></span>
+      <span class="age-tick"><span class="age-tick-emoji"> </span><span class="age-tick-num">10</span></span>
     </div>
   </div>
 
@@ -499,9 +813,9 @@
   </div>
   <div class="done-title">Thank you for <em>contributing</em> to our research!</div>
   <p class="done-body">
-    Your guesses help us understand how people perceive children's language — and how that compares to what AI models detect.
-    Every response brings us closer to building better tools for understanding child development.
+    Your guesses help us understand how people read children's language — and how that compares to what AI detects.
   </p>
+
   <div class="stats-row">
     <div class="stat-card" style="text-align:center">
       <div class="stat-number" id="done-avg-error">—</div>
@@ -512,7 +826,29 @@
       <div class="stat-label">AI avg. error (years)</div>
     </div>
   </div>
+
+  <!-- NEW: research context box -->
+  <div class="done-research-box">
+    <div class="done-research-title">How the AI works</div>
+    The AI doesn't just count words. It looks at whether the child <strong>adds reasons and details</strong> (Expansion) and whether they <strong>bring up new ideas on their own</strong> (Independence). Together, these clues help it guess age better than measuring sentence length alone.
+  </div>
+
   <button class="btn btn-teal" onclick="resetDemo()">Try again</button>
+
+  <!-- NEW: operator talking points -->
+  <div class="operator-section">
+    <button class="operator-toggle" id="op-toggle" onclick="toggleTalkingPoints()">
+      <span>🎙 Facilitator talking points</span>
+      <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="operator-content" id="op-content">
+      <div class="talking-point"><div class="tp-num">1</div><div>Kids don't just talk more as they get older — they explain things, ask questions, and start new topics.</div></div>
+      <div class="talking-point"><div class="tp-num">2</div><div>Our AI looks for two things: how much a child <em>expands</em> their answer, and how much they <em>take charge</em> of the conversation.</div></div>
+      <div class="talking-point"><div class="tp-num">3</div><div>Most AI is trained on adult language. This research helps AI talk with kids in an age-appropriate way.</div></div>
+      <div class="talking-point"><div class="tp-num">4</div><div>Your guesses help us compare human intuition to the AI — both are part of the research!</div></div>
+    </div>
+  </div>
+
   <div class="osu-badge">
     <div class="osu-dot"></div>
     The Ohio State University
@@ -520,73 +856,56 @@
 </div>
 
 <script>
-/* ─── CONFIG ──────────────────────────────────────────────
-   Replace with your Google Apps Script Web App URL.
-   See: https://developers.google.com/apps-script/guides/web
-   ─────────────────────────────────────────────────────── */
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzhkN8e02Ejb7XtOzsa3FwW7kbJEJ0o5q-1IsERrvOhmgAbUOpUil7WfDAUYalw6R--bw/exec";
 
 /* ─── CONVERSATIONS ───────────────────────────────────── */
+/* Real transcripts from CHILDES corpus (EllisWeismer, OCSC) */
 const convos = [
   {
-    id: "conv_A",
-    real_age: 3,
-    model_age: 3,
+    id: "conv_age2",
+    real_age: 2,
+    model_age: 2,
+    illustration: { scene: "scene-sheep", emoji: "🐑 🌿" },
     turns: [
-      { speaker: "adult", text: "What's your favorite animal?" },
-      { speaker: "child", text: "Doggy! Big doggy go woof woof!" },
-      { speaker: "adult", text: "Do you have a dog at home?" },
-      { speaker: "child", text: "No. Want doggy. Mommy say no." }
+      { speaker: "adult", text: "What do you wanna play?" },
+      { speaker: "child", text: "This by cows." },
+      { speaker: "adult", text: "The sheep is gonna go by the cows! Where does that sheep wanna go?" },
+      { speaker: "child", text: "Um this sheep wants go in here." }
     ],
-    insight: "At age 2–3, kids use short phrases and drop grammar words like \"a\" or \"says.\""
+    insight: `<span class="insight-tag tag-expansion">Short &amp; simple</span>
+      Did you catch it? The child said <strong>"wants go"</strong> instead of "wants <em>to</em> go." Age 2 kids haven't learned small words like "to" yet — that's totally normal at this age!`
   },
   {
-    id: "conv_B",
+    id: "conv_age5",
     real_age: 5,
     model_age: 5,
+    illustration: { scene: "scene-school", emoji: "✏️ 📚" },
     turns: [
-      { speaker: "adult", text: "What did you learn at school today?" },
-      { speaker: "child", text: "We drawed butterflies and my teacher said mine was really good!" },
-      { speaker: "adult", text: "That sounds fun! What colors did you use?" },
-      { speaker: "child", text: "Yellow and orange and a little bit blue." }
+      { speaker: "adult", text: "Do you go to school?" },
+      { speaker: "child", text: "Yes." },
+      { speaker: "adult", text: "Tell me about school!" },
+      { speaker: "child", text: "It's fun." },
+      { speaker: "adult", text: "Can you tell me all about your school?" },
+      { speaker: "child", text: "I have recess. I have lunch. I have math. I have guidance." }
     ],
-    insight: "\"Drawed\" instead of \"drew\" is classic age 4–5 — kids apply regular rules to irregular verbs."
+    insight: `<span class="insight-tag tag-expansion">Starting to connect ideas</span>
+      "I have recess. I have lunch. I have math." — Age 5 kids list things one by one in simple sentences. They're not yet saying <em>why</em> they like something, just <em>what</em> it is.`
   },
   {
-    id: "conv_C",
-    real_age: 7,
-    model_age: 7,
-    turns: [
-      { speaker: "adult", text: "What's your favorite subject in school?" },
-      { speaker: "child", text: "Science because we do experiments. Last week we made a volcano!" },
-      { speaker: "adult", text: "Wow, what happened?" },
-      { speaker: "child", text: "It exploded with baking soda and vinegar. My partner spilled some on the table." }
-    ],
-    insight: "Age 6–8 kids use \"because\" to explain things and can sequence events with mostly correct grammar."
-  },
-  {
-    id: "conv_D",
+    id: "conv_age9",
     real_age: 9,
     model_age: 9,
+    illustration: { scene: "scene-boat", emoji: "🦁 🚣" },
     turns: [
-      { speaker: "adult", text: "What do you want to be when you grow up?" },
-      { speaker: "child", text: "Maybe a game designer. I've been thinking about making my own game but I need to learn coding first." },
-      { speaker: "adult", text: "Have you started learning?" },
-      { speaker: "child", text: "A little. I tried Scratch but it feels too basic. I want to learn Python." }
+      { speaker: "adult", text: "Tell me what you see in the picture and make up a story about it." },
+      { speaker: "child", text: "I see two fish, a kid and a lion in a boat, a dragonfly, lily pads, and water." },
+      { speaker: "adult", text: "Can you make up a story about how they got there?" },
+      { speaker: "child", text: "There's a giant flood in the boy's town and the lion was stuck, so the boy saved the lion. There's giant mutant fish in the water and they couldn't get back on land because plants were surrounding it." },
+      { speaker: "adult", text: "What happened at the end? Did they get out?" },
+      { speaker: "child", text: "The boat got too wet and it molded. And they sank." }
     ],
-    insight: "Hypothetical thinking (\"I need to learn\") and comparing options are typical signs of age 9–10."
-  },
-  {
-    id: "conv_E",
-    real_age: 6,
-    model_age: 6,
-    turns: [
-      { speaker: "adult", text: "Do you like the science museum?" },
-      { speaker: "child", text: "Yes! I like the dinosaur part the most. Did you know T-Rex had tiny arms but they were still really strong?" },
-      { speaker: "adult", text: "I didn't know that! How do you know so much?" },
-      { speaker: "child", text: "I have like a hundred dinosaur books. My grandma buys them for me." }
-    ],
-    insight: "Sharing facts, using hyperbole (\"a hundred books\"), and high enthusiasm are all classic age 6!"
+    insight: `<span class="insight-tag tag-independence">Full story with reasons</span>
+      This child builds a whole story with causes ("because plants were surrounding it") and a beginning, middle, and end. That kind of organized, multi-step thinking is very typical of age 9!`
   }
 ];
 
@@ -609,8 +928,6 @@ function updateAge(val) {
   userGuess = parseInt(val);
   document.getElementById("age-display").textContent = val;
   const pct = ((val - 2) / 8) * 100;
-  this.event && (this.event.target.style.background =
-    `linear-gradient(to right, var(--navy) ${pct}%, var(--border) ${pct}%)`);
   const slider = document.getElementById("age-slider");
   slider.style.background =
     `linear-gradient(to right, var(--navy) ${pct}%, rgba(15,35,64,0.12) ${pct}%)`;
@@ -619,6 +936,15 @@ function updateAge(val) {
 function renderBubbles(convo) {
   const container = document.getElementById("bubbles");
   container.innerHTML = "";
+
+  // illustration banner
+  if (convo.illustration) {
+    const ill = document.createElement("div");
+    ill.className = `conv-illustration ${convo.illustration.scene}`;
+    ill.textContent = convo.illustration.emoji;
+    container.parentElement.insertBefore(ill, container);
+  }
+
   convo.turns.forEach(turn => {
     const wrapper = document.createElement("div");
     wrapper.style.display = "flex";
@@ -637,6 +963,10 @@ function renderBubbles(convo) {
 }
 
 /* ─── NAVIGATION ──────────────────────────────────────── */
+function goToLearn() {
+  showScreen("screen-learn");
+}
+
 function startDemo() {
   currentIdx = 0;
   results = [];
@@ -652,6 +982,9 @@ function loadQuestion(idx) {
   userGuess = 6;
   document.getElementById("age-display").textContent = 6;
   slider.style.background = "linear-gradient(to right, var(--navy) 50%, rgba(15,35,64,0.12) 50%)";
+  // clear old illustration
+  const oldIll = document.querySelector(".conv-illustration");
+  if (oldIll) oldIll.remove();
   renderBubbles(convo);
   showScreen("screen-question");
 }
@@ -666,15 +999,13 @@ function submitGuess() {
   document.getElementById("reveal-real").textContent = convo.real_age;
 
   const diff = Math.abs(userGuess - convo.real_age);
-  const modelDiff = Math.abs(convo.model_age - convo.real_age);
-  let insightHTML = `<strong>Did you know?</strong> ${convo.insight}`;
-  if (diff === 0) insightHTML = `<strong>Perfect!</strong> You got it exactly right. ${convo.insight}`;
-  else if (diff <= 1) insightHTML = `<strong>Very close!</strong> You were just ${diff} year off. ${convo.insight}`;
-  document.getElementById("insight-box").innerHTML = insightHTML;
+  let prefix = "";
+  if (diff === 0) prefix = `<strong>Perfect!</strong> You got it exactly right.<br>`;
+  else if (diff <= 1) prefix = `<strong>Very close!</strong> Just ${diff} year off.<br>`;
+  document.getElementById("insight-box").innerHTML = prefix + convo.insight;
 
   const isLast = currentIdx >= convos.length - 1;
   const nextBtn = document.getElementById("next-btn");
-  nextBtn.textContent = isLast ? "See your results" : "Next conversation";
   nextBtn.innerHTML = isLast
     ? `See your results <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
     : `Next conversation <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -707,9 +1038,16 @@ function resetDemo() {
   showScreen("screen-intro");
 }
 
+function toggleTalkingPoints() {
+  const content = document.getElementById("op-content");
+  const toggle = document.getElementById("op-toggle");
+  content.classList.toggle("visible");
+  toggle.classList.toggle("open");
+}
+
 /* ─── GOOGLE SHEETS SAVE ─────────────────────────────── */
 function saveToSheet(convId, userAge, modelAge, realAge) {
-  if (SHEET_URL === "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") return;
+  if (!SHEET_URL || SHEET_URL.includes("YOUR_")) return;
   const payload = {
     session: sessionId,
     timestamp: new Date().toISOString(),
