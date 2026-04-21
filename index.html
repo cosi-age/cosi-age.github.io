@@ -1,1 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Guess How Old These Children Are</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EAE7DE;
+    --card: #FFFFFF;
+    --navy: #0A1828;
+    --teal: #007A6B;
+    --teal-light: #C8EDE8;
+    --orange: #D44A18;
+    --orange-light: #FAE4DC;
+    --muted: #3D4E5E;
+    --border: rgba(10,24,40,0.18);
+    --radius: 20px;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+  }
 
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .screen {
+    display: none;
+    width: 100%;
+    max-width: 520px;
+    animation: fadeUp 0.4s ease both;
+  }
+  .screen.active { display: flex; flex-direction: column; gap: 20px; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    width: fit-content;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 8vw, 44px);
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--navy);
+  }
+  h1 em { font-style: italic; color: var(--teal); }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-weight: 500;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 12px;
+  }
+  .stat-card {
+    flex: 1;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .explainer-card,
+  .learn-section,
+  .conv-card,
+  .age-section,
+  .insight-box,
+  .done-research-box,
+  .support-card,
+  .learning-points,
+  .flow-card,
+  .phone-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .explainer-title,
+  .learn-section-title,
+  .support-title,
+  .points-title,
+  .flow-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+
+  .dev-steps,
+  .support-list,
+  .points-list,
+  .flow-steps,
+  .learn-points {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dev-step,
+  .support-item,
+  .point-item,
+  .flow-step,
+  .learn-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .dev-emoji,
+  .support-icon,
+  .point-num,
+  .flow-num,
+  .learn-icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .dev-step-text,
+  .support-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 2px;
+  }
+
+  .flow-text {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+    padding-top: 2px;
+  }
+
+  .point-text {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+    padding-top: 2px;
+  }
+
+  .learn-text {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+    padding-top: 2px;
+  }
+
+  .dev-age {
+    width: fit-content;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .dev-desc,
+  .support-text,
+  .point-text,
+  .flow-text,
+  .why-box,
+  .done-body,
+  .done-research-box,
+  .operator-content,
+  .talking-point {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .support-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+  }
+
+  .support-caption {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .tip-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--orange-light);
+    color: var(--orange);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    width: fit-content;
+    margin-bottom: 10px;
+  }
+
+  .learning-points {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfd 100%);
+  }
+
+  .point-num,
+  .flow-num {
+    background: var(--teal-light);
+    color: var(--teal);
+  }
+
+  .learn-hero {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 6vw, 38px);
+    font-weight: 300;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--navy);
+    text-wrap: balance;
+  }
+  .learn-hero em { font-style: italic; color: var(--teal); }
+
+  .dimension-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: stretch;
+  }
+  .dimension-card {
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    min-height: 128px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  .dimension-card.expansion { background: var(--orange-light); border-color: rgba(212,74,24,0.15); }
+  .dimension-card.independence { background: var(--teal-light); border-color: rgba(0,122,107,0.2); }
+  .dim-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .expansion .dim-label { color: var(--orange); }
+  .independence .dim-label { color: var(--teal); }
+  .dim-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .why-box {
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-top: 2px;
+    font-size: 14px;
+    line-height: 1.7;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+  .why-box strong,
+  .point-text strong,
+  .support-text strong,
+  .flow-text strong,
+  .done-research-box strong { color: var(--navy); }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 18px 24px;
+    border: none;
+    border-radius: 16px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 20px rgba(15,35,64,0.25);
+  }
+  .btn-primary:hover { box-shadow: 0 6px 28px rgba(15,35,64,0.35); }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .btn-teal {
+    background: var(--teal);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0,166,147,0.3);
+  }
+
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .conv-illustration {
+    border-radius: 14px;
+    overflow: hidden;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  .conv-illustration.scene-sheep  { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
+  .conv-illustration.scene-school { background: linear-gradient(135deg, #fff8e1, #ffe082); }
+  .conv-illustration.scene-nature { background: linear-gradient(135deg, #e8f5e9, #a5d6a7); }
+
+  .conv-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .bubble-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .bubble-adult {
+    background: var(--bg);
+    color: var(--navy);
+    border-radius: 18px 18px 18px 4px;
+    align-self: flex-start;
+    font-weight: 500;
+  }
+  .bubble-child {
+    background: var(--teal-light);
+    color: #002B24;
+    border-radius: 18px 18px 4px 18px;
+    align-self: flex-end;
+    font-weight: 500;
+  }
+  .bubble-speaker {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 3px;
+    color: var(--muted);
+  }
+
+  /* ── Age checkbox grid ── */
+  .age-question {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--navy);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .age-helper {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+
+  .age-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .age-option {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .age-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .age-option-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+  }
+
+  .age-option-label:hover {
+    border-color: var(--teal);
+    background: var(--teal-light);
+    color: var(--teal);
+  }
+
+  .age-option input[type="radio"]:checked + .age-option-label {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+    box-shadow: 0 4px 16px rgba(10,24,40,0.25);
+    transform: scale(1.05);
+  }
+
+  .age-range-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+    margin-top: 4px;
+  }
+  .age-range-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .reveal-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .reveal-card {
+    border-radius: 16px;
+    padding: 16px 12px;
+    text-align: center;
+    border: 1px solid var(--border);
+    animation: revealPop 0.4s ease both;
+  }
+  .reveal-card:nth-child(2) { animation-delay: 0.1s; }
+  .reveal-card:nth-child(3) { animation-delay: 0.2s; }
+  @keyframes revealPop {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .reveal-card.you-card { background: var(--orange-light); border-color: rgba(245,96,42,0.2); }
+  .reveal-card.model-card { background: var(--bg); }
+  .reveal-card.real-card { background: var(--teal-light); border-color: rgba(0,166,147,0.2); }
+  .reveal-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .you-card .reveal-label { color: var(--orange); }
+  .model-card .reveal-label { color: var(--muted); }
+  .real-card .reveal-label { color: var(--teal); }
+  .reveal-age {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .reveal-sublabel {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .insight-box {
+    font-size: 14px;
+    color: #1A2A3A;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .insight-box strong { color: var(--teal); }
+  .insight-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
+    margin-bottom: 8px;
+  }
+  .tag-expansion { background: var(--orange-light); color: var(--orange); }
+  .tag-independence { background: var(--teal-light); color: var(--teal); }
+
+  .done-icon {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+  .done-icon svg { width: 32px; height: 32px; }
+  .done-title {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 4vw, 22px);
+    font-weight: 300;
+    text-align: center;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .done-title em { font-style: italic; color: var(--teal); }
+  .done-body { text-align: center; text-wrap: balance; }
+  .done-research-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+
+  .osu-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .osu-dot { width: 8px; height: 8px; border-radius: 50%; background: #BB0000; }
+
+  .operator-section {
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+  .operator-toggle {
+    background: none;
+    border: none;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 0;
+    letter-spacing: 0.04em;
+  }
+  .operator-toggle svg { transition: transform 0.25s; }
+  .operator-toggle.open svg { transform: rotate(180deg); }
+  .operator-content {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+  }
+  .operator-content.visible { display: flex; }
+  .talking-point {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tp-num {
+    flex-shrink: 0;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+
+  .phone-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .phone-text-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .phone-link {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .phone-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Submit button disabled state */
+  .btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Score panel */
+  .insight-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .insight-block {
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .insight-block.context  { background: #F0EDE6; border: 1px solid rgba(10,24,40,0.12); }
+  .insight-block.exp      { background: var(--orange-light); border: 1px solid rgba(212,74,24,0.2); }
+  .insight-block.ind      { background: var(--teal-light); border: 1px solid rgba(0,122,107,0.2); }
+  .insight-block-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .insight-block.context .insight-block-label { color: var(--navy); }
+  .insight-block.exp     .insight-block-label { color: var(--orange); }
+  .insight-block.ind     .insight-block-label { color: var(--teal); }
+  .insight-block-desc {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+
+  @media (max-width: 540px) {
+    .stats-row { flex-direction: column; }
+    .dimension-row { grid-template-columns: 1fr; }
+    .reveal-cards { grid-template-columns: 1fr; }
+    .phone-card { flex-direction: column; align-items: flex-start; }
+    .learn-hero {
+      font-size: clamp(26px, 8vw, 34px);
+      line-height: 1.3;
+    }
+    .dimension-card {
+      min-height: unset;
+    }
+    .age-checkbox-grid {
+      grid-template-columns: repeat(9, 1fr);
+      gap: 4px;
+    }
+    .age-option-label {
+      height: 44px;
+      font-size: 15px;
+      border-radius: 8px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="screen-intro">
+  <div class="badge"><span class="badge-dot"></span> Live Research Activity</div>
+
+  <div>
+    <h1>Guess How <span style="color:var(--teal)">Old</span><br>These Children Are</h1>
+  </div>
+
+  <p class="subtitle">
+    Read a short conversation, guess the child's age, and compare your answer with ChatGPT.
+    This activity helps visitors see how children's language changes as they grow.
+  </p>
+
+  <div class="support-card">
+    <div class="tip-chip">How to play</div>
+    <div class="support-list">
+      <div class="support-item">
+        <div class="support-icon">1</div>
+        <div class="support-text"><strong>Read</strong> a short child–adult conversation.</div>
+      </div>
+      <div class="support-item">
+        <div class="support-icon">2</div>
+        <div class="support-text"><strong>Guess</strong> how old the child is, from age 2 to 10.</div>
+      </div>
+      <div class="support-item">
+        <div class="support-icon">3</div>
+        <div class="support-text"><strong>Compare</strong> your guess with ChatGPT and the child's real age.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-row" style="justify-content:center;">
+    <div class="stat-card" style="max-width:160px;text-align:center;">
+      <div class="stat-number">3</div>
+      <div class="stat-label">Short conversations</div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="beginExperience()">
+    Start guessing
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <div class="phone-card">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://cosi-age.github.io&bgcolor=FFFFFF&color=0F2340&margin=4"
+      alt="QR code" width="90" height="90" style="border-radius:8px;flex-shrink:0;">
+    <div>
+      <div class="phone-text-title">Join on your phone</div>
+      <div class="phone-link">cosi-age.github.io</div>
+      <div class="phone-sub">Scan to participate</div>
+    </div>
+  </div>
+
+  <div class="osu-badge">
+    <div class="osu-dot"></div>
+    The Ohio State University
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div class="screen" id="screen-question">
+  <div class="progress-wrap">
+    <span class="progress-label" id="progress-text">1 of 3</span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:33%"></div></div>
+  </div>
+
+  <div class="conv-card">
+    <div class="conv-label">Read this conversation</div>
+    <div class="bubble-row" id="bubbles"></div>
+  </div>
+
+  <div class="age-section">
+    <div class="age-question">How old is the child?</div>
+    <div class="age-helper">Tip: younger children usually give shorter, simpler replies. Older children are more likely to explain <strong>why</strong> and add new ideas.</div>
+
+    <div class="age-checkbox-grid" id="age-checkbox-grid">
+      <!-- generated by JS -->
+    </div>
+    <div class="age-range-labels">
+      <span class="age-range-label">🐣 Younger</span>
+      <span class="age-range-label">Older</span>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" id="submit-btn" onclick="submitGuess()" disabled>
+    Submit my guess
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- REVEAL -->
+<div class="screen" id="screen-reveal">
+  <div style="font-family:var(--font-display);font-size:22px;font-weight:300;line-height:1.4">
+    Here's how everyone did
+  </div>
+
+  <div class="reveal-cards">
+    <div class="reveal-card you-card">
+      <div class="reveal-label">You</div>
+      <div class="reveal-age" id="reveal-you">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+    <div class="reveal-card model-card">
+      <div class="reveal-label">ChatGPT</div>
+      <div class="reveal-age" id="reveal-model">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+    <div class="reveal-card real-card">
+      <div class="reveal-label">Real age</div>
+      <div class="reveal-age" id="reveal-real">—</div>
+      <div class="reveal-sublabel">yrs old</div>
+    </div>
+  </div>
+
+  <div class="insight-box" id="insight-box"></div>
+
+  <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">
+    Next conversation
+    <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- DONE -->
+<div class="screen" id="screen-done">
+  <div class="done-icon">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 16.5l7 7 13-14" stroke="#00A693" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div class="done-title">Thanks for <em>trying</em> the activity!</div>
+
+
+
+  <div class="learn-section">
+    <div class="learn-section-title">What are we studying?</div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.65;font-weight:500;margin-bottom:14px;">
+      In our research, we study child language using two ideas that go beyond sentence length alone.
+    </p>
+    <div class="dimension-row">
+      <div class="dimension-card expansion">
+        <div class="dim-label">💬 Expansion</div>
+        <div class="dim-desc">How much the child adds details, explanations, or reasons.</div>
+      </div>
+      <div class="dimension-card independence">
+        <div class="dim-label">⭐ Independence</div>
+        <div class="dim-desc">How much the child introduces ideas instead of only reacting to the adult's question.</div>
+      </div>
+    </div>
+    <div class="why-box">
+      Together, these help us measure <strong>how</strong> a child expresses ideas — not just how many words they say.
+    </div>
+  </div>
+
+  <div class="learn-section">
+    <div class="learn-section-title">Why do we care if AI can guess a child's age?</div>
+    <p style="font-size:14px;color:var(--muted);line-height:1.65;font-weight:500;">
+      AI is becoming part of education, search, and everyday tools for families. But most AI is trained on adult language, not child language.
+    </p>
+    <div class="why-box" style="margin-top:12px;">
+      That matters because children do not speak like small adults. Younger children often give shorter answers, add fewer reasons, and introduce fewer new ideas on their own. If AI does not recognize those patterns, it may misunderstand what a child means or respond in ways that are too advanced.
+    </div>
+  </div>
+
+  <div class="learn-section" style="background: var(--teal-light); border-color: rgba(0,122,107,0.2);">
+    <div class="learn-section-title" style="color: var(--teal); margin-bottom:6px;">💬 What clues did you notice?</div>
+    <p style="font-size:14px; color: var(--navy); line-height:1.65; font-weight:500;">
+      Did the child's word choice, sentence length, or the way they added details help you guess the age?
+    </p>
+  </div>
+
+  <button class="btn btn-secondary" onclick="resetDemo()">Try again</button>
+
+
+
+  <div class="osu-badge">
+    <div class="osu-dot"></div>
+    The Ohio State University
+  </div>
+</div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzhkN8e02Ejb7XtOzsa3FwW7kbJEJ0o5q-1IsERrvOhmgAbUOpUil7WfDAUYalw6R--bw/exec";
+
+const convos = [
+  {
+    id: "conv_age2",
+    real_age: 2,
+    model_age: 3,
+    illustration: { scene: "scene-sheep", emoji: "🐑 🌿" },
+    turns: [
+      { speaker: "adult", text: "What do you wanna play?" },
+      { speaker: "child", text: "This by cows." },
+      { speaker: "adult", text: "The sheep is gonna go by the cows! Where does that sheep wanna go?" },
+      { speaker: "child", text: "Um this sheep wants go in here." }
+    ],
+    insight: `<div class="insight-blocks">
+        <div class="insight-block context">
+          <div class="insight-block-label">Short &amp; Simple</div>
+          <div class="insight-block-desc">The child leaves out small words like "to" — typical at age 2.</div>
+        </div>
+        <div class="insight-block exp">
+          <div class="insight-block-label">💬 Expansion — Low</div>
+          <div class="insight-block-desc">Short word combinations. No full sentences or extra details.</div>
+        </div>
+        <div class="insight-block ind">
+          <div class="insight-block-label">⭐ Independence — Low</div>
+          <div class="insight-block-desc">The child gives a short answer and does not introduce a new idea.</div>
+        </div>
+      </div>`
+  },
+  {
+    id: "conv_age5",
+    real_age: 5,
+    model_age: 5,
+    illustration: { scene: "scene-nature", emoji: "🐟 🌲" },
+    turns: [
+      { speaker: "adult", text: "oh that's all you can remember from school. now we just had the summer didn't we." },
+      { speaker: "child", text: "mhm." },
+      { speaker: "adult", text: "I went on vacation this summer. can you tell me about your summer." },
+      { speaker: "child", text: "uh we went on vacation too before school started." },
+      { speaker: "adult", text: "oh where did you go." },
+      { speaker: "child", text: "Fish Creek. and I got this bad owie." }
+    ],
+    insight: `<div class="insight-blocks">
+        <div class="insight-block context">
+          <div class="insight-block-label">Small Details, Real Story</div>
+          <div class="insight-block-desc">The child answers the question, names a place, and adds one personal detail from the trip.</div>
+        </div>
+        <div class="insight-block exp">
+          <div class="insight-block-label">💬 Expansion — Medium</div>
+          <div class="insight-block-desc">Answers with basic sentences and adds one spontaneous detail.</div>
+        </div>
+        <div class="insight-block ind">
+          <div class="insight-block-label">⭐ Independence — Medium</div>
+          <div class="insight-block-desc">Introduces new information ("Fish Creek," "bad owie") beyond just answering the question.</div>
+        </div>
+      </div>`
+  },
+  {
+    id: "conv_age9",
+    real_age: 9,
+    model_age: 8,
+    illustration: { scene: "scene-boat", emoji: "🦁 🚣" },
+    turns: [
+      { speaker: "adult", text: "Tell me what you see in the picture and make up a story about it." },
+      { speaker: "child", text: "I see two fish, a kid and a lion in a boat, a dragonfly, lily pads, and water." },
+      { speaker: "adult", text: "Can you make up a story about how they got there?" },
+      { speaker: "child", text: "There's a giant flood in the boy's town and the lion was stuck, so the boy saved the lion. There's giant mutant fish in the water and they couldn't get back on land because plants were surrounding it." },
+      { speaker: "adult", text: "What happened at the end? Did they get out?" },
+      { speaker: "child", text: "The boat got too wet and it molded. And they sank." }
+    ],
+    insight: `<div class="insight-blocks">
+        <div class="insight-block context">
+          <div class="insight-block-label">Full Story with Reasons</div>
+          <div class="insight-block-desc">The child builds causes, consequences, and a connected ending — without being asked.</div>
+        </div>
+        <div class="insight-block exp">
+          <div class="insight-block-label">💬 Expansion — High</div>
+          <div class="insight-block-desc">Multiple causal links ("so," "because"). Detailed sequence of events.</div>
+        </div>
+        <div class="insight-block ind">
+          <div class="insight-block-label">⭐ Independence — High</div>
+          <div class="insight-block-desc">Drives the story forward and adds reasons and conclusions.</div>
+        </div>
+      </div>`
+  }
+];
+
+// Shuffle convos once per session
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let shuffledConvos = shuffleArray(convos);
+let currentIdx = 0;
+let userGuess = null;
+let results = [];
+const sessionId = Math.random().toString(36).slice(2, 9);
+
+function buildAgeCheckboxes() {
+  const grid = document.getElementById('age-checkbox-grid');
+  grid.innerHTML = '';
+  for (let age = 2; age <= 10; age++) {
+    const wrapper = document.createElement('label');
+    wrapper.className = 'age-option';
+    wrapper.htmlFor = `age-opt-${age}`;
+
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = 'age-pick';
+    input.id = `age-opt-${age}`;
+    input.value = age;
+    input.addEventListener('change', () => {
+      userGuess = age;
+      document.getElementById('submit-btn').disabled = false;
+    });
+
+    const label = document.createElement('span');
+    label.className = 'age-option-label';
+    label.textContent = age;
+
+    wrapper.appendChild(input);
+    wrapper.appendChild(label);
+    grid.appendChild(wrapper);
+  }
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none';
+  requestAnimationFrame(() => { el.style.animation = ''; });
+}
+
+function renderBubbles(convo) {
+  const container = document.getElementById('bubbles');
+  container.innerHTML = '';
+
+  const oldIll = document.querySelector('.conv-illustration');
+  if (oldIll) oldIll.remove();
+
+  if (convo.illustration) {
+    const ill = document.createElement('div');
+    ill.className = `conv-illustration ${convo.illustration.scene}`;
+    ill.textContent = convo.illustration.emoji;
+    container.parentElement.insertBefore(ill, container);
+  }
+
+  convo.turns.forEach(turn => {
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    wrapper.style.alignItems = turn.speaker === 'child' ? 'flex-end' : 'flex-start';
+
+    const speaker = document.createElement('div');
+    speaker.className = 'bubble-speaker';
+    speaker.textContent = turn.speaker === 'adult' ? 'Adult' : 'Child';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble bubble-' + turn.speaker;
+    bubble.textContent = turn.text;
+
+    wrapper.appendChild(speaker);
+    wrapper.appendChild(bubble);
+    container.appendChild(wrapper);
+  });
+}
+
+function beginExperience() {
+  shuffledConvos = shuffleArray(convos);
+  currentIdx = 0;
+  results = [];
+  loadQuestion(0);
+}
+
+function loadQuestion(idx) {
+  const convo = shuffledConvos[idx];
+  document.getElementById('progress-text').textContent = `${idx + 1} of ${shuffledConvos.length}`;
+  document.getElementById('progress-fill').style.width = `${((idx + 1) / shuffledConvos.length) * 100}%`;
+
+  userGuess = null;
+  buildAgeCheckboxes();
+  document.getElementById('submit-btn').disabled = true;
+
+  renderBubbles(convo);
+  showScreen('screen-question');
+}
+
+function submitGuess() {
+  if (userGuess === null) return;
+  const convo = shuffledConvos[currentIdx];
+  results.push({ id: convo.id, guess: userGuess, model: convo.model_age, real: convo.real_age });
+  saveToSheet(convo.id, userGuess, convo.model_age, convo.real_age);
+
+  document.getElementById('reveal-you').textContent = userGuess;
+  document.getElementById('reveal-model').textContent = convo.model_age;
+  document.getElementById('reveal-real').textContent = convo.real_age;
+
+  const diff = Math.abs(userGuess - convo.real_age);
+  let prefix = '';
+  if (diff === 0) prefix = `<strong>Perfect!</strong> You got it exactly right.<br>`;
+  else if (diff <= 1) prefix = `<strong>Very close!</strong> Just ${diff} year off.<br>`;
+
+  document.getElementById('insight-box').innerHTML = prefix + convo.insight;
+
+  const isLast = currentIdx >= shuffledConvos.length - 1;
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.innerHTML = isLast
+    ? `See your results <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+    : `Next conversation <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  showScreen('screen-reveal');
+}
+
+function nextQuestion() {
+  currentIdx++;
+  if (currentIdx >= shuffledConvos.length) {
+    showDone();
+  } else {
+    loadQuestion(currentIdx);
+  }
+}
+
+function showDone() {
+  showScreen('screen-done');
+}
+
+function resetDemo() {
+  currentIdx = 0;
+  results = [];
+  showScreen('screen-intro');
+}
+
+function saveToSheet(convId, userAge, modelAge, realAge) {
+  if (!SHEET_URL || SHEET_URL.includes('YOUR_')) return;
+
+  const payload = {
+    session: sessionId,
+    timestamp: new Date().toISOString(),
+    conversation_id: convId,
+    user_guess: userAge,
+    model_guess: modelAge,
+    real_age: realAge,
+    user_error: Math.abs(userAge - realAge),
+    model_error: Math.abs(modelAge - realAge)
+  };
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+</script>
+</body>
+</html>
