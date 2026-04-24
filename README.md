@@ -1,4 +1,4 @@
-# How Old Did They Sound? — COSI Demo
+# Guess How Old These Children Are — COSI Demo
 
 **Live demo → [cosi-age.github.io](https://cosi-age.github.io)**
 
