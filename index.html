@@ -407,6 +407,8 @@
   .conv-illustration.scene-sheep  { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); }
   .conv-illustration.scene-school { background: linear-gradient(135deg, #fff8e1, #ffe082); }
   .conv-illustration.scene-nature { background: linear-gradient(135deg, #e8f5e9, #a5d6a7); }
+  .conv-illustration.scene-kitchen { background: linear-gradient(135deg, #fce4ec, #f8bbd0); }
+  .conv-illustration.scene-art    { background: linear-gradient(135deg, #e3f2fd, #bbdefb); }
 
   .conv-label {
     font-size: 11px;
@@ -807,7 +809,7 @@
 
   <div class="stats-row" style="justify-content:center;">
     <div class="stat-card" style="max-width:160px;text-align:center;">
-      <div class="stat-number">3</div>
+      <div class="stat-number">5</div>
       <div class="stat-label">Short conversations</div>
     </div>
   </div>
@@ -836,8 +838,8 @@
 <!-- QUESTION -->
 <div class="screen" id="screen-question">
   <div class="progress-wrap">
-    <span class="progress-label" id="progress-text">1 of 3</span>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:33%"></div></div>
+    <span class="progress-label" id="progress-text">1 of 5</span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
   </div>
 
   <div class="conv-card">
@@ -906,8 +908,6 @@
 
   <div class="done-title">Thanks for <em>trying</em> the activity!</div>
 
-
-
   <div class="learn-section">
     <div class="learn-section-title">What are we studying?</div>
     <p style="font-size:14px;color:var(--muted);line-height:1.65;font-weight:500;margin-bottom:14px;">
@@ -947,8 +947,6 @@
 
   <button class="btn btn-secondary" onclick="resetDemo()">Try again</button>
 
-
-
   <div class="osu-badge">
     <div class="osu-dot"></div>
     The Ohio State University
@@ -986,6 +984,33 @@ const convos = [
       </div>`
   },
   {
+    id: "conv_age2b",
+    real_age: 2,
+    model_age: 3,
+    illustration: { scene: "scene-kitchen", emoji: "🍴 🧺" },
+    turns: [
+      { speaker: "child", text: "I want the babies. Those are baby forks." },
+      { speaker: "adult", text: "Uh-huh." },
+      { speaker: "child", text: "Me shut it. Me shut it." },
+      { speaker: "adult", text: "Can you get it? Do you need help?" },
+      { speaker: "child", text: "I shut it. It's empty." }
+    ],
+    insight: `<div class="insight-blocks">
+        <div class="insight-block context">
+          <div class="insight-block-label">Incomplete Grammar</div>
+          <div class="insight-block-desc">The child uses "Me shut it" instead of "I'll shut it" — a typical grammar pattern at age 2.</div>
+        </div>
+        <div class="insight-block exp">
+          <div class="insight-block-label">💬 Expansion — Low</div>
+          <div class="insight-block-desc">Mostly short, incomplete phrases. "It's empty" is the longest complete sentence.</div>
+        </div>
+        <div class="insight-block ind">
+          <div class="insight-block-label">⭐ Independence — Low</div>
+          <div class="insight-block-desc">The child reacts to the situation but does not ask questions or explain why.</div>
+        </div>
+      </div>`
+  },
+  {
     id: "conv_age5",
     real_age: 5,
     model_age: 5,
@@ -1014,10 +1039,40 @@ const convos = [
       </div>`
   },
   {
+    id: "conv_age9b",
+    real_age: 9,
+    model_age: 9,
+    illustration: { scene: "scene-art", emoji: "🎨 🧁" },
+    turns: [
+      { speaker: "adult", text: "What are some things you know how to do?" },
+      { speaker: "child", text: "I have sweatshirts, so I usually put a short-sleeve shirt on and then I put my sweatshirt on." },
+      { speaker: "adult", text: "You're doing great." },
+      { speaker: "child", text: "Frosting cupcakes — make icing, make a swirly pattern on the cupcake, put sprinkles on it, and then eat it." },
+      { speaker: "adult", text: "What flavors do you like?" },
+      { speaker: "child", text: "Vanilla and chocolate, both of them. And painting — get water, get a paintbrush, get paint, get a piece of paper, and then you can paint whatever you want." },
+      { speaker: "adult", text: "What are some things you like to paint?" },
+      { speaker: "child", text: "Sunrises." }
+    ],
+    insight: `<div class="insight-blocks">
+        <div class="insight-block context">
+          <div class="insight-block-label">Ordered Steps &amp; Lists</div>
+          <div class="insight-block-desc">The child organizes information into clear step-by-step sequences for multiple topics.</div>
+        </div>
+        <div class="insight-block exp">
+          <div class="insight-block-label">💬 Expansion — High</div>
+          <div class="insight-block-desc">Gives detailed multi-step sequences ("make icing → pattern → sprinkles → eat") without being prompted.</div>
+        </div>
+        <div class="insight-block ind">
+          <div class="insight-block-label">⭐ Independence — Medium</div>
+          <div class="insight-block-desc">Shifts to new topics (painting) on their own, but introduces ideas through listing rather than explaining why.</div>
+        </div>
+      </div>`
+  },
+  {
     id: "conv_age9",
     real_age: 9,
     model_age: 8,
-    illustration: { scene: "scene-boat", emoji: "🦁 🚣" },
+    illustration: { scene: "scene-school", emoji: "🦁 🚣" },
     turns: [
       { speaker: "adult", text: "Tell me what you see in the picture and make up a story about it." },
       { speaker: "child", text: "I see two fish, a kid and a lion in a boat, a dragonfly, lily pads, and water." },
@@ -1037,7 +1092,7 @@ const convos = [
         </div>
         <div class="insight-block ind">
           <div class="insight-block-label">⭐ Independence — High</div>
-          <div class="insight-block-desc">Drives the story forward and adds reasons and conclusions.</div>
+          <div class="insight-block-desc">Drives the story forward and adds reasons and conclusions without being prompted.</div>
         </div>
       </div>`
   }
